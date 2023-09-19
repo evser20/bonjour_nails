@@ -1,7 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"bonjour_nails/config"
+	"bonjour_nails/internal/app"
+	"fmt"
+	"log"
+)
 
 func main() {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Config error: %s", err)
+	}
+
+	app.Run(cfg)
 	fmt.Println("Bonjour!")
 }
