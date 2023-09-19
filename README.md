@@ -1,1 +1,1 @@
-# bonjour_nails
+# Telegram-bot for beauty studio
