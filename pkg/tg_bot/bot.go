@@ -7,35 +7,43 @@ import (
 )
 
 type TgBot struct {
-	botAPI *tgbotapi.BotAPI
+	bot *tgbotapi.BotAPI
 }
 
-func NewAPI(token string) (*TgBot, error) {
-	bot, err := tgbotapi.NewBotAPI(token)
-	return &TgBot{
-		botAPI: bot,
-	}, err
+func NewBot(bot *tgbotapi.BotAPI) *TgBot {
+	return &TgBot{bot}
 }
 
 func (b *TgBot) StartedFunc() {
-	b.botAPI.Debug = true
+	updates := b.initUpdatesChannel()
 
+	b.handleUpdates(updates)
+}
+
+func (b *TgBot) initUpdatesChannel() tgbotapi.UpdatesChannel {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	updates := b.botAPI.GetUpdatesChan(u)
+	return b.bot.GetUpdatesChan(u)
+}
 
+func (b *TgBot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
-		if update.Message != nil { // If we got a message
-			log.Error().Msg(fmt.Sprintf("[%s] %s", update.Message.From.UserName, update.Message.Text))
-
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
-
-			_, err := b.botAPI.Send(msg)
-			if err != nil {
-				log.Error().Msg(fmt.Sprintf("error: %s", err))
-			}
+		if update.Message == nil {
+			continue
 		}
+
+		b.handleMessage(update.Message)
+	}
+}
+
+func (b *TgBot) handleMessage(message *tgbotapi.Message) {
+	log.Error().Msg(fmt.Sprintf("[%s] %s", message.From.UserName, message.Text))
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
+
+	_, err := b.bot.Send(msg)
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("error: %s", err))
 	}
 }

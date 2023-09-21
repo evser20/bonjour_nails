@@ -10,7 +10,6 @@ type (
 		App   `yaml:"app"`
 		TgBot `yaml:"tg_bot"`
 		HTTP  `yaml:"http"`
-		Log   `yaml:"logger"`
 	}
 
 	App struct {
@@ -24,10 +23,6 @@ type (
 
 	HTTP struct {
 		Port string `yaml:"port"`
-	}
-
-	Log struct {
-		Level string `yaml:"log_level"`
 	}
 )
 

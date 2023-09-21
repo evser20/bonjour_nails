@@ -3,7 +3,6 @@ package main
 import (
 	"bonjour_nails/config"
 	"bonjour_nails/internal/app"
-	"fmt"
 	"log"
 )
 
@@ -14,5 +13,4 @@ func main() {
 	}
 
 	app.Run(cfg)
-	fmt.Println("Bonjour!")
 }
