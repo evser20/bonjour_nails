@@ -1,17 +1,17 @@
 package tg_bot
 
 import (
-	"fmt"
+	"bonjour_nails/internal/masters"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/rs/zerolog/log"
 )
 
 type TgBot struct {
-	bot *tgbotapi.BotAPI
+	bot     *tgbotapi.BotAPI
+	masters *masters.API
 }
 
-func NewBot(bot *tgbotapi.BotAPI) *TgBot {
-	return &TgBot{bot}
+func NewBot(bot *tgbotapi.BotAPI, m *masters.API) *TgBot {
+	return &TgBot{bot, m}
 }
 
 func (b *TgBot) StartedFunc() {
@@ -33,17 +33,6 @@ func (b *TgBot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 			continue
 		}
 
-		b.handleMessage(update.Message)
-	}
-}
-
-func (b *TgBot) handleMessage(message *tgbotapi.Message) {
-	log.Error().Msg(fmt.Sprintf("[%s] %s", message.From.UserName, message.Text))
-
-	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
-
-	_, err := b.bot.Send(msg)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error: %s", err))
+		b.handleCommand(update.Message)
 	}
 }
