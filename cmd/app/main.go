@@ -1,7 +1,8 @@
 package main
 
 import (
-	"bonjour_nails/config"
+	"bonjour_nails/cmd/config"
+	"bonjour_nails/cmd/server"
 	"bonjour_nails/internal/app"
 	"log"
 )
@@ -12,5 +13,10 @@ func main() {
 		log.Fatalf("Config error: %s", err)
 	}
 
-	app.Run(cfg)
+	m, err := server.Run()
+	if err != nil {
+		log.Fatalf("Server error: %s", err)
+	}
+
+	app.Run(cfg, m)
 }
